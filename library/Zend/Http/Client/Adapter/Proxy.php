@@ -297,10 +297,7 @@ class Zend_Http_Client_Adapter_Proxy extends Zend_Http_Client_Adapter_Socket
         // If all is good, switch socket to secure mode. We have to fall back
         // through the different modes
         $modes = array(
-            STREAM_CRYPTO_METHOD_TLS_CLIENT,
-            STREAM_CRYPTO_METHOD_SSLv3_CLIENT,
-            STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
-            STREAM_CRYPTO_METHOD_SSLv2_CLIENT
+            STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
         );
 
         $success = false;
