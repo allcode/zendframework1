@@ -582,17 +582,33 @@ class Zend_Form_Element implements Zend_Validate_Interface
     }
 
     /**
-     * Filter a value
-     *
-     * @param  string $value
-     * @param  string $key
-     * @return void
+     * @param mixed $value
+     * @return mixed
      */
-    protected function _filterValue(&$value, &$key)
+    protected function _filterValue($value)
     {
         foreach ($this->getFilters() as $filter) {
             $value = $filter->filter($value);
         }
+
+        return $value;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function _filterRecursive($value)
+    {
+        if(is_array($value)) {
+            foreach($value as $k => $v) {
+                $value[$k] = $this->_filterRecursive($v);
+            }
+
+            return $value;
+        }
+
+        return $this->_filterValue($value);
     }
 
     /**
@@ -602,15 +618,11 @@ class Zend_Form_Element implements Zend_Validate_Interface
      */
     public function getValue()
     {
-        $valueFiltered = $this->_value;
-
-        if ($this->isArray() && is_array($valueFiltered)) {
-            array_walk_recursive($valueFiltered, array($this, '_filterValue'));
-        } else {
-            $this->_filterValue($valueFiltered, $valueFiltered);
+        if(is_array($this->_value) && $this->isArray()) {
+            return $this->_filterRecursive($this->_value);
         }
 
-        return $valueFiltered;
+        return $this->_filterValue($this->_value);
     }
 
     /**
